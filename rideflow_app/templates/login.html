@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="login-shell">
+    <div class="row justify-content-center align-items-stretch g-4">
+        <div class="col-xl-11">
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-7">
+                    <div class="auth-showcase h-100">
+                        <span class="eyebrow-pill">Control center access</span>
+                        <h1 class="auth-title">Sign in to run RideFlow like a real mobility platform.</h1>
+                        <p class="auth-subtitle">Jump into role-based dashboards for riders, drivers and admins with live MySQL-backed booking flows, payments, trip state control and analytics.</p>
+                        <div class="auth-feature-grid">
+                            <div class="auth-feature-card">
+                                <strong>Live booking</strong>
+                                <span>Request, match, accept, track and close rides across a full lifecycle.</span>
+                            </div>
+                            <div class="auth-feature-card">
+                                <strong>Operational reporting</strong>
+                                <span>Revenue, payouts, fleet status and complaints stay visible to admins.</span>
+                            </div>
+                            <div class="auth-feature-card">
+                                <strong>Database-first workflow</strong>
+                                <span>Stored procedures, triggers, views and DCL all power the actual product flow.</span>
+                            </div>
+                        </div>
+                        <div class="demo-grid">
+                            <div class="demo-pill">
+                                <span>Admin</span>
+                                <strong>admin@rideflow.com</strong>
+                                <small>Admin@123</small>
+                            </div>
+                            <div class="demo-pill">
+                                <span>Rider</span>
+                                <strong>rider1@rideflow.com</strong>
+                                <small>Rider@123</small>
+                            </div>
+                            <div class="demo-pill">
+                                <span>Driver</span>
+                                <strong>driver1@rideflow.com</strong>
+                                <small>Driver@123</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="card auth-card shadow-sm border-0 h-100">
+                        <div class="card-body p-4 p-lg-5">
+                            <span class="section-kicker d-block mb-2">Welcome back</span>
+                            <h3 class="mb-3">Open your dashboard</h3>
+                            <form method="post">
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input class="form-control" type="email" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input class="form-control" type="password" name="password" required>
+                                </div>
+                                <button class="btn btn-dark w-100" type="submit">Sign In</button>
+                            </form>
+                            <div class="auth-actions">
+                                <a class="btn btn-outline-dark w-100" href="{{ url_for('register_rider') }}">Create Rider Account</a>
+                                <a class="btn btn-outline-dark w-100" href="{{ url_for('register_driver') }}">Register Driver</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-xl-9">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="mb-4">Register Driver</h2>
+                <form method="post" class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Full Name</label>
+                        <input class="form-control" type="text" name="full_name" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input class="form-control" type="email" name="email" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Phone</label>
+                        <input class="form-control" type="text" name="phone" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Password</label>
+                        <input class="form-control" type="password" name="password" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">License Number</label>
+                        <input class="form-control" type="text" name="license_no" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">CNIC</label>
+                        <input class="form-control" type="text" name="cnic" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Current City Hub</label>
+                        <select class="form-select" name="current_location_id" required>
+                            {% for location in locations %}
+                                <option value="{{ location.location_id }}">{{ location.city }} - {{ location.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Vehicle Type</label>
+                        <select class="form-select" name="vehicle_type" required>
+                            <option>Economy</option>
+                            <option>Premium</option>
+                            <option>Bike</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Make</label>
+                        <input class="form-control" type="text" name="make" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Model</label>
+                        <input class="form-control" type="text" name="model" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Year</label>
+                        <input class="form-control" type="number" name="year" min="1990" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Color</label>
+                        <input class="form-control" type="text" name="color" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Plate</label>
+                        <input class="form-control" type="text" name="plate" required>
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-dark" type="submit">Create Driver Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

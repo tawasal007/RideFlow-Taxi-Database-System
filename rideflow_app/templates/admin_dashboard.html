@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-banner dashboard-banner-admin mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-lg-7">
+            <span class="section-kicker text-white-50 d-block mb-2">Admin command center</span>
+            <h1 class="dashboard-banner-title">Run fleet operations, pricing and reporting from one live overview.</h1>
+            <p class="dashboard-banner-copy">Monitor system health, manage users and vehicles, tune fare logic, review payouts and complaints, and watch platform activity in real time.</p>
+        </div>
+        <div class="col-lg-5">
+            <div class="dashboard-metrics">
+                <div class="metric-tile">
+                    <span class="metric-label">Revenue</span>
+                    <strong class="metric-value">PKR {{ "%.2f"|format(stats.total_revenue or 0) }}</strong>
+                </div>
+                <div class="metric-tile">
+                    <span class="metric-label">Commission</span>
+                    <strong class="metric-value">PKR {{ "%.2f"|format(stats.total_commission or 0) }}</strong>
+                </div>
+                <div class="metric-tile">
+                    <span class="metric-label">Active Rides</span>
+                    <strong class="metric-value">{{ stats.active_rides }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4 col-xl-2"><div class="stat-card"><div class="small text-secondary">Users</div><div class="fs-3 fw-bold">{{ stats.total_users }}</div></div></div>
+    <div class="col-md-4 col-xl-2"><div class="stat-card"><div class="small text-secondary">Riders</div><div class="fs-3 fw-bold">{{ stats.total_riders }}</div></div></div>
+    <div class="col-md-4 col-xl-2"><div class="stat-card"><div class="small text-secondary">Drivers</div><div class="fs-3 fw-bold">{{ stats.total_drivers }}</div></div></div>
+    <div class="col-md-4 col-xl-2"><div class="stat-card"><div class="small text-secondary">Active Rides</div><div class="fs-3 fw-bold">{{ stats.active_rides }}</div></div></div>
+    <div class="col-md-4 col-xl-2"><div class="stat-card"><div class="small text-secondary">Revenue</div><div class="fs-5 fw-bold">PKR {{ "%.2f"|format(stats.total_revenue or 0) }}</div></div></div>
+    <div class="col-md-4 col-xl-2"><div class="stat-card"><div class="small text-secondary">Commission</div><div class="fs-5 fw-bold">PKR {{ "%.2f"|format(stats.total_commission or 0) }}</div></div></div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h4 class="mb-3">Revenue by City</h4>
+                <canvas id="revenueChart" height="160"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h4 class="mb-3">Payment Method Breakdown</h4>
+                <canvas id="paymentChart" height="160"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Trip Status Snapshot</h4>
+                <canvas id="statusChart" height="90"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-7">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Manage Users</h4>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>{{ user.full_name }}<div class="small text-secondary">{{ user.email }}</div></td>
+                                    <td>{{ user.role }}</td>
+                                    <td>{{ user.status }}</td>
+                                    <td>
+                                        <form method="post" action="{{ url_for('admin_update_user_status', user_id=user.user_id) }}" class="d-flex gap-2">
+                                            <select class="form-select form-select-sm" name="status">
+                                                <option value="Active">Active</option>
+                                                <option value="Suspended">Suspended</option>
+                                                <option value="Banned">Banned</option>
+                                                <option value="Flagged">Flagged</option>
+                                            </select>
+                                            <button class="btn btn-sm btn-outline-dark">Save</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Vehicle Verification</h4>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Driver</th><th>Vehicle</th><th>Type</th><th>Verify</th></tr></thead>
+                        <tbody>
+                            {% for vehicle in vehicles %}
+                                <tr>
+                                    <td>{{ vehicle.driver_name }}</td>
+                                    <td>{{ vehicle.make }} {{ vehicle.model }}<div class="small text-secondary">{{ vehicle.plate }}</div></td>
+                                    <td>{{ vehicle.type }}</td>
+                                    <td>
+                                        <form method="post" action="{{ url_for('admin_verify_vehicle', vehicle_id=vehicle.vehicle_id) }}" class="d-flex gap-2">
+                                            <select class="form-select form-select-sm" name="verified">
+                                                <option value="Verified">Verified</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Rejected">Rejected</option>
+                                            </select>
+                                            <button class="btn btn-sm btn-outline-dark">Save</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-3">Full Trip Report</h4>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead><tr><th>Ride</th><th>Rider</th><th>Driver</th><th>Vehicle</th><th>Status</th><th>Fare</th><th>Route</th></tr></thead>
+                        <tbody>
+                            {% for trip in trip_report %}
+                                <tr>
+                                    <td>#{{ trip.ride_id }}</td>
+                                    <td>{{ trip.rider_name }}</td>
+                                    <td>{{ trip.driver_name or 'Unassigned' }}</td>
+                                    <td>{{ trip.plate or 'N/A' }} / {{ trip.vehicle_type or 'N/A' }}</td>
+                                    <td>{{ trip.status }}</td>
+                                    <td>PKR {{ "%.2f"|format(trip.fare or 0) }}</td>
+                                    <td>{{ trip.pickup_city }} to {{ trip.dropoff_city }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-5">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Configure Fare Rules</h4>
+                <form method="post" action="{{ url_for('admin_save_fare_rule') }}" class="row g-2">
+                    <div class="col-md-6"><input class="form-control" type="text" name="city" placeholder="City" required></div>
+                    <div class="col-md-6">
+                        <select class="form-select" name="vehicle_type">
+                            <option>Economy</option>
+                            <option>Premium</option>
+                            <option>Bike</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4"><input class="form-control" type="number" step="0.01" name="base_rate" placeholder="Base" required></div>
+                    <div class="col-md-4"><input class="form-control" type="number" step="0.01" name="per_km_rate" placeholder="Per KM" required></div>
+                    <div class="col-md-4"><input class="form-control" type="number" step="0.01" name="per_min_rate" placeholder="Per Minute" required></div>
+                    <div class="col-md-6"><input class="form-control" type="number" step="0.01" name="surge_multiplier" placeholder="Surge Multiplier" required></div>
+                    <div class="col-md-6"><input class="form-control" type="number" step="0.01" name="commission_pct" placeholder="Commission %" required></div>
+                    <div class="col-md-6"><input class="form-control" type="time" name="peak_start"></div>
+                    <div class="col-md-6"><input class="form-control" type="time" name="peak_end"></div>
+                    <div class="col-12"><button class="btn btn-dark w-100">Save Fare Rule</button></div>
+                </form>
+                <div class="mt-3 small text-secondary">
+                    {% for rule in fare_rules %}
+                        <div>{{ rule.city }} / {{ rule.vehicle_type }}: base {{ rule.base_rate }}, km {{ rule.per_km_rate }}, min {{ rule.per_min_rate }}, surge {{ rule.surge_multiplier }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Create Promo Code</h4>
+                <form method="post" action="{{ url_for('admin_create_promo') }}" class="row g-2">
+                    <div class="col-md-6"><input class="form-control" type="text" name="code" placeholder="Code" required></div>
+                    <div class="col-md-6"><input class="form-control" type="number" step="0.01" name="discount" placeholder="Discount %" required></div>
+                    <div class="col-md-6"><input class="form-control" type="datetime-local" name="valid_from" required></div>
+                    <div class="col-md-6"><input class="form-control" type="datetime-local" name="valid_until" required></div>
+                    <div class="col-md-6"><input class="form-control" type="number" name="usage_limit" placeholder="Usage Limit" required></div>
+                    <div class="col-md-6">
+                        <select class="form-select" name="status">
+                            <option value="Active">Active</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Disabled">Disabled</option>
+                        </select>
+                    </div>
+                    <div class="col-12"><button class="btn btn-outline-dark w-100">Create Promo</button></div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Low Rated Drivers</h4>
+                {% for driver in low_rated_drivers %}
+                    <div class="border rounded p-2 mb-2">
+                        <div class="fw-semibold">{{ driver.full_name }}</div>
+                        <div class="small text-secondary">Rating {{ driver.avg_rating }} | Trips {{ driver.total_trips }} | Status {{ driver.status }}</div>
+                    </div>
+                {% else %}
+                    <div class="text-secondary small">No drivers below 3.5 at the moment.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Payout Requests</h4>
+                {% for payout in payouts %}
+                    <div class="border rounded p-3 mb-2">
+                        <div class="fw-semibold">{{ payout.driver_name }} requested PKR {{ "%.2f"|format(payout.amount) }}</div>
+                        <div class="small text-secondary mb-2">{{ payout.status }} | {{ payout.requested_at }}</div>
+                        <form method="post" action="{{ url_for('admin_process_payout', payout_id=payout.payout_id) }}" class="d-flex gap-2">
+                            <select class="form-select form-select-sm" name="status">
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                                <option value="Paid">Paid</option>
+                            </select>
+                            <button class="btn btn-sm btn-outline-dark">Update</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="text-secondary small">No payout requests.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Complaints</h4>
+                {% for complaint in complaints %}
+                    <div class="border rounded p-3 mb-2">
+                        <div class="fw-semibold">Ride #{{ complaint.ride_id }}: {{ complaint.filed_by_name }} against {{ complaint.against_name }}</div>
+                        <div class="small mb-1">{{ complaint.comp_desc }}</div>
+                        <div class="small text-secondary">{{ complaint.status }} | {{ complaint.filed_at }}</div>
+                    </div>
+                {% else %}
+                    <div class="text-secondary small">No complaints found.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-3">Recent Notifications</h4>
+                {% for note in notifications %}
+                    <div class="border-bottom py-2">
+                        <div class="fw-semibold">{{ note.category }}</div>
+                        <div class="small">{{ note.message }}</div>
+                        <div class="small text-secondary">{{ note.created_at }}</div>
+                    </div>
+                {% else %}
+                    <div class="text-secondary small">No notifications.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const revenueRows = {{ revenue_by_city|tojson }};
+const paymentRows = {{ payment_breakdown|tojson }};
+const statusRows = {{ trips_by_status|tojson }};
+
+new Chart(document.getElementById("revenueChart"), {
+    type: "bar",
+    data: {
+        labels: revenueRows.map(row => `${row.city} (${row.revenue_date})`),
+        datasets: [{
+            label: "Revenue",
+            data: revenueRows.map(row => row.total_revenue),
+            backgroundColor: "#00b964",
+            borderRadius: 10
+        }]
+    }
+});
+
+new Chart(document.getElementById("paymentChart"), {
+    type: "doughnut",
+    data: {
+        labels: paymentRows.map(row => row.method),
+        datasets: [{
+            data: paymentRows.map(row => row.total_amount),
+            backgroundColor: ["#00170d", "#00a156", "#00b964", "#f7d35b"]
+        }]
+    }
+});
+
+new Chart(document.getElementById("statusChart"), {
+    type: "line",
+    data: {
+        labels: statusRows.map(row => row.status),
+        datasets: [{
+            label: "Trips",
+            data: statusRows.map(row => row.total),
+            borderColor: "#00b964",
+            backgroundColor: "rgba(0, 185, 100, 0.14)",
+            tension: 0.25,
+            fill: true
+        }]
+    }
+});
+</script>
+{% endblock %}

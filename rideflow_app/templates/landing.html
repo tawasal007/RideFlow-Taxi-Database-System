@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+{% block body_class %}landing-page{% endblock %}
+{% block content %}
+<section class="landing-hero mb-5">
+    <div class="row g-4 align-items-center">
+        <div class="col-xl-6">
+            <div class="hero-copy">
+                <span class="eyebrow-pill">Live ride operations, booking, payouts and analytics</span>
+                <h1 class="hero-title">Your city moves faster when booking, dispatch and reporting live in one clean system.</h1>
+                <p class="hero-subtitle">RideFlow blends the bold clarity of a modern ride-hailing product with the control an admin team needs behind the scenes. Riders book in seconds, drivers work from a focused console, and admins monitor everything from one analytics layer.</p>
+                <div class="hero-actions">
+                    <a class="btn btn-dark btn-lg" href="{{ url_for('login') }}">Open Control Center</a>
+                    <a class="btn btn-outline-dark btn-lg" href="{{ url_for('register_driver') }}">Become a Driver</a>
+                </div>
+                <div class="hero-strip">
+                    <div class="hero-strip-item">
+                        <span class="hero-strip-value">{{ stats.online_drivers }}</span>
+                        <span class="hero-strip-label">Online Drivers</span>
+                    </div>
+                    <div class="hero-strip-item">
+                        <span class="hero-strip-value">{{ stats.total_completed_trips }}</span>
+                        <span class="hero-strip-label">Completed Trips</span>
+                    </div>
+                    <div class="hero-strip-item">
+                        <span class="hero-strip-value">{{ stats.total_cities }}</span>
+                        <span class="hero-strip-label">Cities Covered</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="hero-stage">
+                <div class="hero-map-grid"></div>
+                <div class="hero-floating-card hero-card-route">
+                    <div class="mock-label">Ride Match</div>
+                    <div class="mock-ride-line">
+                        <span class="ride-point pickup"></span>
+                        <div>
+                            <strong>Johar Town</strong>
+                            <div>Pickup locked in</div>
+                        </div>
+                    </div>
+                    <div class="mock-ride-line">
+                        <span class="ride-point dropoff"></span>
+                        <div>
+                            <strong>DHA Phase 5</strong>
+                            <div>ETA 14 mins</div>
+                        </div>
+                    </div>
+                    <div class="mock-divider"></div>
+                    <div class="mock-meta">
+                        <span>Fare estimate</span>
+                        <strong>PKR 540</strong>
+                    </div>
+                </div>
+                <div class="hero-floating-card hero-card-driver">
+                    <div class="mock-label">Driver Console</div>
+                    <div class="driver-mini-card">
+                        <div class="driver-avatar">A</div>
+                        <div>
+                            <strong>Ahmed Raza</strong>
+                            <div>4.9 rating • Civic Premium</div>
+                        </div>
+                    </div>
+                    <div class="status-pill-row">
+                        <span class="status-pill status-pill-live">Online</span>
+                        <span class="status-pill">Cash + Wallet</span>
+                    </div>
+                </div>
+                <div class="hero-dashboard-panel">
+                    <div class="panel-topline">
+                        <span class="mock-label">Admin Pulse</span>
+                        <span class="status-pill status-pill-emerald">Realtime</span>
+                    </div>
+                    <div class="mini-metrics-grid">
+                        <div class="mini-metric">
+                            <span>Riders</span>
+                            <strong>{{ stats.total_riders }}</strong>
+                        </div>
+                        <div class="mini-metric">
+                            <span>Drivers</span>
+                            <strong>{{ stats.total_drivers }}</strong>
+                        </div>
+                        <div class="mini-metric">
+                            <span>Promo Codes</span>
+                            <strong>{{ stats.active_promos }}</strong>
+                        </div>
+                        <div class="mini-metric">
+                            <span>Coverage</span>
+                            <strong>{{ stats.total_cities }} cities</strong>
+                        </div>
+                    </div>
+                    <div class="mini-graph">
+                        <span style="height: 35%"></span>
+                        <span style="height: 54%"></span>
+                        <span style="height: 46%"></span>
+                        <span style="height: 72%"></span>
+                        <span style="height: 68%"></span>
+                        <span style="height: 84%"></span>
+                        <span style="height: 93%"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="metric-ribbon mb-5" id="experience">
+    <div class="row g-3">
+        <div class="col-md-6 col-xl-3">
+            <div class="ribbon-card">
+                <span class="ribbon-value">{{ stats.total_riders }}</span>
+                <span class="ribbon-label">Riders served through the platform</span>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="ribbon-card">
+                <span class="ribbon-value">{{ stats.total_drivers }}</span>
+                <span class="ribbon-label">Driver profiles and verified fleet support</span>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="ribbon-card">
+                <span class="ribbon-value">{{ stats.total_completed_trips }}</span>
+                <span class="ribbon-label">Trips archived with payment and review trails</span>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="ribbon-card">
+                <span class="ribbon-value">{{ stats.active_promos }}</span>
+                <span class="ribbon-label">Active promotional offers managed live</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="landing-section mb-5" id="platform">
+    <div class="section-heading">
+        <span class="section-kicker">Three experiences. One platform.</span>
+        <h2>Designed like a modern mobility product, structured like an operations dashboard.</h2>
+        <p>Each role gets a focused environment instead of a cluttered all-in-one screen.</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="role-card">
+                <div class="role-icon role-rider">R</div>
+                <h3>For Riders</h3>
+                <p>Fast booking flows, wallet top-ups, promo code entry, ride history, payments, ratings and complaints from one clean workspace.</p>
+                <ul class="feature-list">
+                    <li>Instant ride request flow</li>
+                    <li>Wallet and payment handling</li>
+                    <li>Trip history with feedback actions</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="role-card">
+                <div class="role-icon role-driver">D</div>
+                <h3>For Drivers</h3>
+                <p>Toggle online status, handle incoming offers, update trip lifecycle stages, track wallet earnings and request payouts without noise.</p>
+                <ul class="feature-list">
+                    <li>Offer acceptance and rejection</li>
+                    <li>Trip-state management</li>
+                    <li>Payout and earnings visibility</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="role-card">
+                <div class="role-icon role-admin">A</div>
+                <h3>For Admins</h3>
+                <p>Operational oversight, role governance, fare configuration, promo control, payout review, vehicle verification and live analytics.</p>
+                <ul class="feature-list">
+                    <li>Revenue and status dashboards</li>
+                    <li>User and fleet management</li>
+                    <li>Reports, complaints and notifications</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="landing-section mb-5">
+    <div class="row g-4 align-items-stretch">
+        <div class="col-xl-7">
+            <div class="surface-panel h-100">
+                <div class="section-heading left-aligned">
+                    <span class="section-kicker">Operational flow</span>
+                    <h2>From request to payout, every stage is visible and structured.</h2>
+                </div>
+                <div class="process-grid">
+                    <div class="process-card">
+                        <span class="process-step">01</span>
+                        <h4>Request and match</h4>
+                        <p>Pickup and drop-off create a structured ride request that is routed to available verified drivers.</p>
+                    </div>
+                    <div class="process-card">
+                        <span class="process-step">02</span>
+                        <h4>Track trip state</h4>
+                        <p>Requested, accepted, en route, in progress and completed states keep everyone synchronized.</p>
+                    </div>
+                    <div class="process-card">
+                        <span class="process-step">03</span>
+                        <h4>Calculate fare</h4>
+                        <p>Distance, duration, city-specific pricing, surge logic and promo discounts flow through stored procedures.</p>
+                    </div>
+                    <div class="process-card">
+                        <span class="process-step">04</span>
+                        <h4>Close the loop</h4>
+                        <p>Payments, ride history, ratings, complaints, commissions and payout requests all stay linked to the same trip.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-5" id="pricing">
+            <div class="surface-panel surface-panel-dark h-100">
+                <div class="section-heading left-aligned light">
+                    <span class="section-kicker">Pricing intelligence</span>
+                    <h2>Transparent fare logic by city and vehicle class.</h2>
+                    <p>The platform supports configurable base rates, per-kilometer and per-minute logic, plus surge multipliers for peak windows.</p>
+                </div>
+                <div class="fare-card-stack">
+                    {% for fare in fare_cards[:4] %}
+                        <div class="fare-card">
+                            <div>
+                                <span class="fare-city">{{ fare.city }}</span>
+                                <strong>{{ fare.vehicle_type }}</strong>
+                            </div>
+                            <div class="fare-meta">
+                                <span>Base PKR {{ fare.base_rate }}</span>
+                                <span>{{ fare.per_km_rate }}/km</span>
+                                <span>Surge x{{ fare.surge_multiplier }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="landing-section mb-5" id="roles">
+    <div class="row g-4">
+        <div class="col-xl-5">
+            <div class="section-heading left-aligned">
+                <span class="section-kicker">Leaderboard and trust</span>
+                <h2>Quality signals stay visible, not buried in the backend.</h2>
+                <p>Driver ratings, ride history, leaderboard placement and low-rating flagging help the platform stay accountable for both service quality and safety.</p>
+            </div>
+        </div>
+        <div class="col-xl-7">
+            <div class="leaderboard-shell">
+                {% for driver in leaderboard %}
+                    <div class="leaderboard-row">
+                        <div class="leaderboard-rank">#{{ driver.city_rank }}</div>
+                        <div class="leaderboard-info">
+                            <strong>{{ driver.driver_name }}</strong>
+                            <span>{{ driver.city }} • {{ driver.total_trips }} trips completed</span>
+                        </div>
+                        <div class="leaderboard-score">{{ "%.1f"|format(driver.avg_rating or 0) }}</div>
+                    </div>
+                {% else %}
+                    <div class="text-secondary">Leaderboard data will appear here once ratings are available.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="landing-cta">
+    <div class="cta-panel">
+        <div>
+            <span class="section-kicker">Ready to enter the platform?</span>
+            <h2>Launch the full Rider, Driver or Admin experience from one clean entry point.</h2>
+        </div>
+        <div class="cta-actions">
+            <a class="btn btn-dark btn-lg" href="{{ url_for('login') }}">Sign In</a>
+            <a class="btn btn-outline-dark btn-lg" href="{{ url_for('register_rider') }}">Create Rider Account</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

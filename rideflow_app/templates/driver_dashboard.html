@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-banner dashboard-banner-driver mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-lg-7">
+            <span class="section-kicker text-white-50 d-block mb-2">Driver console</span>
+            <h1 class="dashboard-banner-title">Stay online, respond fast and keep earnings visible.</h1>
+            <p class="dashboard-banner-copy">Offer handling, trip progression, payout requests and earnings tracking are all organized for quick driver decision-making.</p>
+        </div>
+        <div class="col-lg-5">
+            <div class="dashboard-metrics">
+                <div class="metric-tile">
+                    <span class="metric-label">Wallet</span>
+                    <strong class="metric-value">PKR {{ "%.2f"|format(profile.wallet or 0) }}</strong>
+                </div>
+                <div class="metric-tile">
+                    <span class="metric-label">Rating</span>
+                    <strong class="metric-value">{{ profile.avg_rating or 'N/A' }}</strong>
+                </div>
+                <div class="metric-tile">
+                    <span class="metric-label">Trips Completed</span>
+                    <strong class="metric-value">{{ profile.total_trips }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Availability</h4>
+                <form method="post" action="{{ url_for('driver_availability') }}" class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="available">
+                            <option value="Online" {% if profile.available == 'Online' %}selected{% endif %}>Online</option>
+                            <option value="Offline" {% if profile.available == 'Offline' %}selected{% endif %}>Offline</option>
+                            <option value="OnTrip" {% if profile.available == 'OnTrip' %}selected{% endif %}>OnTrip</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Current Hub</label>
+                        <select class="form-select" name="current_location_id">
+                            {% for location in locations %}
+                                <option value="{{ location.location_id }}" {% if profile.current_location_id == location.location_id %}selected{% endif %}>{{ location.city }} - {{ location.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-dark w-100">Update Availability</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-3">Request Weekly Payout</h4>
+                <form method="post" action="{{ url_for('driver_request_payout') }}" class="d-flex gap-2">
+                    <input class="form-control" type="number" min="1" step="0.01" name="amount" placeholder="Amount" required>
+                    <button class="btn btn-outline-dark">Request</button>
+                </form>
+                <hr>
+                <h6>Payout History</h6>
+                {% for payout in payouts %}
+                    <div class="border rounded p-2 mb-2">
+                        <div class="fw-semibold">PKR {{ "%.2f"|format(payout.amount) }}</div>
+                        <div class="small text-secondary">{{ payout.status }} on {{ payout.requested_at }}</div>
+                    </div>
+                {% else %}
+                    <div class="text-secondary small">No payouts requested yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-8">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Pending Ride Offers</h4>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Ride</th>
+                                <th>Rider</th>
+                                <th>Route</th>
+                                <th>Fare</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for offer in offers %}
+                                <tr>
+                                    <td>#{{ offer.ride_id }}</td>
+                                    <td>{{ offer.rider_name }}</td>
+                                    <td>{{ offer.pickup_label }} to {{ offer.dropoff_label }}</td>
+                                    <td>PKR {{ "%.2f"|format(offer.fare or 0) }}</td>
+                                    <td class="d-flex gap-2">
+                                        <form method="post" action="{{ url_for('driver_accept_ride', ride_id=offer.ride_id) }}">
+                                            <button class="btn btn-sm btn-dark">Accept</button>
+                                        </form>
+                                        <form method="post" action="{{ url_for('driver_reject_ride', ride_id=offer.ride_id) }}">
+                                            <button class="btn btn-sm btn-outline-danger">Reject</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="5" class="text-secondary">No pending offers right now.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Current Trips</h4>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Ride</th>
+                                <th>Rider</th>
+                                <th>Route</th>
+                                <th>Status</th>
+                                <th>Update</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ride in active_rides %}
+                                <tr>
+                                    <td>#{{ ride.ride_id }}</td>
+                                    <td>{{ ride.rider_name }}</td>
+                                    <td>{{ ride.pickup_label }} to {{ ride.dropoff_label }}</td>
+                                    <td>{{ ride.status }}</td>
+                                    <td>
+                                        <form method="post" action="{{ url_for('driver_ride_status', ride_id=ride.ride_id) }}" class="d-flex gap-2">
+                                            <select class="form-select form-select-sm" name="status">
+                                                <option value="DriverEnRoute">Driver En Route</option>
+                                                <option value="InProgress">In Progress</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                            </select>
+                                            <button class="btn btn-sm btn-outline-dark">Save</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="5" class="text-secondary">No active trips assigned.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h4 class="mb-3">Trip History</h4>
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Ride</th>
+                                <th>Rider</th>
+                                <th>Status</th>
+                                <th>Fare</th>
+                                <th>Review Rider</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ride in history %}
+                                <tr>
+                                    <td>#{{ ride.ride_id }}</td>
+                                    <td>{{ ride.rider_name }}</td>
+                                    <td>{{ ride.status }}</td>
+                                    <td>PKR {{ "%.2f"|format(ride.fare or 0) }}</td>
+                                    <td>
+                                        <form method="post" action="{{ url_for('submit_rating', ride_id=ride.ride_id) }}" class="d-flex gap-2 flex-wrap">
+                                            <select class="form-select form-select-sm" name="score">
+                                                <option value="5">5</option>
+                                                <option value="4">4</option>
+                                                <option value="3">3</option>
+                                                <option value="2">2</option>
+                                                <option value="1">1</option>
+                                            </select>
+                                            <input class="form-control form-control-sm" type="text" name="comment" placeholder="Review">
+                                            <button class="btn btn-sm btn-outline-dark">Rate</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="5" class="text-secondary">No completed trips yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
