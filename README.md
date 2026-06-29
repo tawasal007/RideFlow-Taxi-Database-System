@@ -361,5 +361,3 @@ BS Artificial Intelligence
 FAST-NUCES Islamabad
 
 Email: [tawasalmahdi86@gmail.com](mailto:tawasalmahdi86@gmail.com)
-LinkedIn: [Add LinkedIn]
-GitHub: [Add GitHub]
